@@ -36,7 +36,17 @@ export function runCppLint(filename: string, workspaces: string[], enableworkspa
     let config = ConfigManager.getInstance().getConfig();
     let cpplint = config["cpplintPath"];
     let linelength = "--linelength=" + config['lineLength'];
-    let param: string[] = ['--output=eclipse', linelength];
+    let param: string[] = [];
+    let exec: string;
+    // If using a custom python script modify the args and exec to call spawn.
+    if (config['usePyFile'] == true ){
+        exec = "python";
+        param = [cpplint, '--output=eclipse', linelength];
+    }
+    else{
+        exec = cpplint;
+        param = ['--output=eclipse', linelength];
+    }
 
     if (config['excludes'].length != 0) {
         config['excludes'].forEach(element => {
@@ -84,7 +94,7 @@ export function runCppLint(filename: string, workspaces: string[], enableworkspa
             }
             workspaceparam = workspaceparam.concat(["--recursive", workspace]);
 
-            let output = lint(cpplint, workspaceparam);
+            let output = lint(exec, workspaceparam);
             out = output;
         }
         return out.join('\n');
@@ -110,7 +120,7 @@ export function runCppLint(filename: string, workspaces: string[], enableworkspa
         }
 
         param.push(filename);
-        let output = lint(cpplint, param);
+        let output = lint(exec, param);
         let end = 'CppLint ended: ' + new Date().toString();
         let out = output;
         return out.join('\n');

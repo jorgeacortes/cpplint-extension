@@ -57,6 +57,14 @@ export class ConfigManager {
         }
     }
 
+    public isWorkspaceMode(): boolean {
+        if (this.config['lintMode'] == 'workspace') {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public isSupportLanguage(language: string): boolean {
         if (this.config["languages"].indexOf(language) >= 0) {
             return true;
@@ -72,8 +80,15 @@ export class ConfigManager {
         if (settings) {
             var cpplintPath = this.findCpplintPath(settings);
 
+            let threeLastChars = cpplintPath.substring(cpplintPath.length - 3);
+            if (threeLastChars === ".py"){
+                this.config['usePyFile'] = true;
+            } else {
+                this.config['usePyFile'] = false;
+            }
+
             if (!existsSync(cpplintPath)) {
-                vscode.window.showErrorMessage('Cpplint: Could not find cpplint executable');
+                vscode.window.showErrorMessage('Cpplint: Could not find cpplint executable.');
             }
 
             this.config['cpplintPath'] = cpplintPath;

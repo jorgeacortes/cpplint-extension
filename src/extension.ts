@@ -35,6 +35,12 @@ export function activate(context: vscode.ExtensionContext) {
     let whole = vscode.commands.registerCommand('cpplint.runWholeAnalysis', runWholeAnalysis);
     context.subscriptions.push(whole);
 
+    let demand = vscode.commands.registerCommand('cpplint.lintCurrentFile', lintCurrentFile);
+    context.subscriptions.push(demand);clearLints
+
+    let clear = vscode.commands.registerCommand('cpplint.clearLints', clearLints);
+    context.subscriptions.push(clear);
+
     vscode.workspace.onDidChangeConfiguration((()=>loadConfigure()).bind(this));
 }
 
@@ -87,10 +93,10 @@ function doLint() {
     if (vscode.window.activeTextEditor) {
         let language = vscode.window.activeTextEditor.document.languageId
         if (ConfigManager.getInstance().isSupportLanguage(language)) {
-            if (ConfigManager.getInstance().isSingleMode()) {
-                Lint(diagnosticCollection, false);
-            } else {
+            if (ConfigManager.getInstance().isWorkspaceMode()) {
                 Lint(diagnosticCollection, true);
+            } else {
+                Lint(diagnosticCollection, false);
             }
         }
     }
@@ -111,9 +117,26 @@ function loadConfigure() {
         startLint2();
         vscode.window.onDidChangeActiveTextEditor((() => startLint2()).bind(this));
         vscode.workspace.onDidSaveTextDocument((() => startLint2()).bind(this));
-    } else {
+    } else if (ConfigManager.getInstance().isWorkspaceMode()) {
         // start timer to do workspace lint
         startLint();
         vscode.workspace.onDidSaveTextDocument((() => startLint()).bind(this));
+    } else {
+        // Do nothing in demand mode.
     }
 }
+
+// Lints current file on demand. If the file is dirty, saves it to avoid wrong
+// linting as cpplint parses saved file.
+function lintCurrentFile() {
+    if (vscode.window.activeTextEditor.document.isDirty){
+        vscode.window.activeTextEditor.document.save();
+    }
+    startLint2();
+}
+
+// Clears all problems and squiggles from the views.
+function clearLints() {
+    diagnosticCollection.clear();
+}
+

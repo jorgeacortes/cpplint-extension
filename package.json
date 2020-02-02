@@ -2,12 +2,13 @@
     "name": "cpplint",
     "displayName": "cpplint",
     "description": "code style check tool extension for cpplint",
-    "version": "0.1.3",
+    "version": "0.1.4",
     "publisher": "mine",
     "repository": {
         "type": "Git",
         "url": "https://github.com/secularbird/cpplint-extension"
     },
+    "license": "MIT",
     "engines": {
         "vscode": "^1.21.0"
     },
@@ -21,7 +22,9 @@
         "onLanguage:cpp",
         "onLanguage:c",
         "onCommand:cpplint.runAnalysis",
-        "onCommand:cpplint.runWholeAnalysis"
+        "onCommand:cpplint.runWholeAnalysis",
+        "onCommand:cpplint.lintCurrentFile",
+        "onCommand:cpplint.clearLints"
     ],
     "main": "./out/src/extension",
     "contributes": {
@@ -34,6 +37,16 @@
             {
                 "command": "cpplint.runWholeAnalysis",
                 "title": "Analyze current workspace",
+                "category": "cpplinter"
+            },
+            {
+                "command": "cpplint.lintCurrentFile",
+                "title": "Lint current file",
+                "category": "cpplinter"
+            },
+            {
+                "command": "cpplint.clearLints",
+                "title": "Clear cpplint problems and squiggles",
                 "category": "cpplinter"
             }
         ],
@@ -51,9 +64,10 @@
                     "default": "single",
                     "enum": [
                         "single",
-                        "workspace"
+                        "workspace",
+                        "single-demand"
                     ],
-                    "description": "single is fast, only provides information of current active file, workspace is slow, provides informations of the whole workspace"
+                    "description": "single is fast, only provides information of current active file, workspace is slow, provides informations of the whole workspace, single-demand works only when manually invoking the command for a single file."
                 },
                 "cpplint.lineLength": {
                     "type": "number",

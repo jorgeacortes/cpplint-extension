@@ -66,7 +66,7 @@ dir c:\ProgramData\Anaconda2\Scripts\cpplint.exe
 
 ## Extension Settings
 
-* `cpplint.cpplintPath`: set cpplint executable path, path on windows should like `c:\\ProgramData\\Anaconda2\\Scripts\\cpplint.exe`
+* `cpplint.cpplintPath`: set cpplint executable path, path on windows should like `c:\\ProgramData\\Anaconda2\\Scripts\\cpplint.exe`. Python files are allowed like `cpplint.py`.
 * `cpplint.lintMode`: set cpplint mode, avialable value are single and workspace
 * `cpplint.lineLength`: set line length strict, default is 80 characters
 * `cpplint.excludes`: set exclude rules, which is related path and shell globbing is preforming, abosluted path is supported right now,
